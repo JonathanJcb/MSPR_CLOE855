@@ -106,8 +106,6 @@ def Readfiche2(post_nom):
     conn.close()
     return render_template('read_data.html', data=data)
 
-    return render_template('formulaire_recherche_nom.html')
-
 # Authentification utilisateur pour la nouvelle route
 @app.route('/user_authentification', methods=['GET', 'POST'])
 def user_authentification():
