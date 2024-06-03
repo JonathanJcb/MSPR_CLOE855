@@ -36,7 +36,7 @@ def lecture():
 @app.route('/authentification', methods=['GET', 'POST'])
 def authentification():
     if request.method == 'POST':
-        if request.form['username'] == 'admin' and request.form['password'] == 'password':
+        if request.form['username'] == 'user' and request.form['password'] == '12345':
             session['authentifie'] = True
             return redirect(url_for('lecture'))
         else:
@@ -94,19 +94,17 @@ def enregistrer_client():
     return redirect('/consultation/')
 
 # Nouvelle route pour la recherche par nom
-@app.route('/fiche_nom/', methods=['GET', 'POST'])
-def fiche_nom():
+@app.route('/fiche_client/<string:post_nom>')
+def Readfiche2(post_nom):
     if not est_authentifie():
         return redirect(url_for('user_authentification'))
 
-    if request.method == 'POST':
-        nom = request.form['nom']
-        conn = sqlite3.connect('database.db')
-        cursor = conn.cursor()
-        cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom,))
-        data = cursor.fetchall()
-        conn.close()
-        return render_template('read_data.html', data=data)
+    conn = sqlite3.connect('database.db')
+    cursor = conn.cursor()
+    cursor.execute('SELECT * FROM clients WHERE nom = ?', (post_nom,))
+    data = cursor.fetchall()
+    conn.close()
+    return render_template('read_data.html', data=data)
 
     return render_template('formulaire_recherche_nom.html')
 
