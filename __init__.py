@@ -54,16 +54,21 @@ def authentification():
 
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
+    if not est_authentifie():
+        return redirect(url_for('user_authentification'))
+
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM clients WHERE id = ?', (post_id,))
     data = cursor.fetchall()
     conn.close()
-    # Rendre le template HTML et transmettre les données
     return render_template('read_data.html', data=data)
 
 @app.route('/consultation/')
 def ReadBDD():
+    if not est_authentifie():
+        return redirect(url_for('user_authentification'))
+
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM clients;')
@@ -71,38 +76,45 @@ def ReadBDD():
     conn.close()
     return render_template('read_data.html', data=data)
 
+# Formulaire pour enregistrer un client
 @app.route('/enregistrer_client', methods=['GET'])
 def formulaire_client():
-    return render_template('formulaire.html')  # afficher le formulaire
+    if not est_authentifie():
+        return redirect(url_for('user_authentification'))
 
+    return render_template('formulaire.html')
+
+# Enregistrer un client dans la BDD
 @app.route('/enregistrer_client', methods=['POST'])
 def enregistrer_client():
+    if not est_authentifie():
+        return redirect(url_for('user_authentification'))
+
     nom = request.form['nom']
     prenom = request.form['prenom']
-
-    # Connexion à la base de données
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
-
-    # Exécution de la requête SQL pour insérer un nouveau client
     cursor.execute('INSERT INTO clients (created, nom, prenom, adresse) VALUES (?, ?, ?, ?)', (1002938, nom, prenom, "ICI"))
     conn.commit()
     conn.close()
-    return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
+    return redirect('/consultation/')
 
+# Nouvelle route pour la recherche par nom
 @app.route('/fiche_nom/', methods=['GET', 'POST'])
 def fiche_nom():
     if not est_authentifie():
-        return redirect(url_for('user_authentification')
+        return redirect(url_for('user_authentification'))
+
     if request.method == 'POST':
-    conn = sqlite3.connect('database.db')
-    cursor = conn.cursor()
-    cursor.execute('SELECT * FROM clients WHERE nom = ?', (post_nom,))
-    data = cursor.fetchall()
-    conn.close()
-    # Rendre le template HTML et transmettre les données
-    return render_template('read_data.html', data=data)
-return render_template('formulaire_recherche_nom.html')
+        nom = request.form['nom']
+        conn = sqlite3.connect('database.db')
+        cursor = conn.cursor()
+        cursor.execute('SELECT * FROM clients WHERE nom = ?', (nom,))
+        data = cursor.fetchall()
+        conn.close()
+        return render_template('read_data.html', data=data)
+
+    return render_template('formulaire_recherche_nom.html')
 
 # Authentification utilisateur pour la nouvelle route
 @app.route('/user_authentification', methods=['GET', 'POST'])
@@ -116,6 +128,5 @@ def user_authentification():
 
     return render_template('formulaire_authentification.html', error=False)
 
-
 if __name__ == "__main__":
-  app.run(debug=True)
+    app.run(debug=True)
