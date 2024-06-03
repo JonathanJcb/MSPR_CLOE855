@@ -8,6 +8,19 @@ import sqlite3
 app = Flask(__name__)                                                                                                                  
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
 
+# Login
+handler = RotatingFileHandler('access.log', maxBytes=10000, backupCount=1)
+handler.setLevel(logging.INFO)
+app.logger.addHandler(handler)
+
+@app.before_request
+def log_request_info():
+    app.logger.info("Accès à la route : %s, Méthode : %s, IP : %s", request.path, request.method, request.remote_addr)
+
+# Fonction pour vérifier si l'utilisateur est authentifié
+def est_authentifie():
+    return session.get('authentifie')
+    
 # Fonction pour créer une clé "authentifie" dans la session utilisateur
 def est_authentifie():
     return session.get('authentifie')
@@ -77,8 +90,11 @@ def enregistrer_client():
     conn.close()
     return redirect('/consultation/')  # Rediriger vers la page d'accueil après l'enregistrement
 
-@app.route('/fiche_nom/<string:post_nom>')
-def Readfiche2(post_nom):
+@app.route('/fiche_nom/', methods=['GET', 'POST'])
+def fiche_nom():
+    if not est_authentifie():
+        return redirect(url_for('user_authentification')
+    if request.method == 'POST':
     conn = sqlite3.connect('database.db')
     cursor = conn.cursor()
     cursor.execute('SELECT * FROM clients WHERE nom = ?', (post_nom,))
@@ -86,6 +102,20 @@ def Readfiche2(post_nom):
     conn.close()
     # Rendre le template HTML et transmettre les données
     return render_template('read_data.html', data=data)
+return render_template('formulaire_recherche_nom.html')
+
+# Authentification utilisateur pour la nouvelle route
+@app.route('/user_authentification', methods=['GET', 'POST'])
+def user_authentification():
+    if request.method == 'POST':
+        if request.form['username'] == 'user' and request.form['password'] == '12345':
+            session['authentifie'] = True
+            return redirect(url_for('fiche_nom'))
+        else:
+            return render_template('formulaire_authentification.html', error=True)
+
+    return render_template('formulaire_authentification.html', error=False)
+
 
 if __name__ == "__main__":
   app.run(debug=True)
