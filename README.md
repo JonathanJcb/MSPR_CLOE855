@@ -267,17 +267,16 @@ Difficulté : Moyenne (~2 heures)
 Votre MSPR fera l'objet d'un rapport venant accompagner et compléter les travaux techniques que vous avez pu réalisé dans le cadre de votre projet. 
 Complétez directement ce Readme pour nous expliquer comment avez sécuriser votre infrastructure.  
 
-**Expliquez nous dans cette section comment fonctionne la sécurisation de votre infrastructure :**  
-..  
-..  
+Ce rapport détaille les différentes étapes et techniques utilisées pour sécuriser une solution cloud dans le cadre de l'atelier "Développer et sécuriser une solution cloud". Ce projet concerne une entreprise fictive ayant besoin de sécuriser sa solution cloud. L'objectif est de concevoir et sécuriser des solutions d'infrastructure virtualisées et cloud, ainsi que de mettre en pratique des connaissances informatiques liées à la sécurisation d'une infrastructure IT virtualisée.
 
-**Expliquez nous dans cette section comment avez vous sécuriser vos clés SSH :**  
-..  
-..  
+Pour la sécurisation de l'infrastructure web on à décidé de mettre en place plusieurs point, il y a tout d'abord la sauvegarde automatique de la base de données database.db sur un serveur tiers. Nous avons mis en place une tâche cron sur notre serveur Alwaysdata et cette tâche exécute un script quotidien qui transfère la base de données vers un serveur de sauvegarde via un protocole sécurisé comme SCP (Secure Copy Protocol). Nous avons mis en place un contrôle d'accès qui suit le trafic des connexions, nous avons configuré des logs détaillés dans notre application Flask. Nous utilisons la bibliothèque logging pour enregistrer chaque tentative de connexion et action critique, incluant les informations telles que l'adresse IP et l'heure de l'accès. Pour surveiller les activités suspectes, nous avons intégré un système de détection d'intrusion (IDS). 
 
-**Expliquez nous dans cette section comment avez vous sécuriser votre code :**  
-..  
-..  
+Pour la sécurisation des Clés SSH on utilise une solution de gestion centralisée des Clés SSH qui est HashiCorp Vault pour stocker et gérer nos clés SSH de manière sécurisée. Vault permet de générer, stocker et contrôler l'accès aux clés SSH. Nous avons ensuite mis en place un processus de rotation régulière des clés SSH en utilisant des scripts automatisés qui régénèrent les paires de clés et mettent à jour les systèmes avec les nouvelles clés. Et, pour renforcer la sécurité des connexions SSH, nous avons intégré une authentification à plusieurs facteurs (MFA) en utilisant Google Authenticator.
+
+
+Pour sécuriser le code on à effectué un contrôle de Qualité et Sécurité du Code et pour cela nous avons utilisé des services de contrôle de code source comme SonarQube pour vérifier la qualité et la sécurité de notre code source. SonarQube analyse le code pour identifier les vulnérabilités, les bugs, et les mauvaises pratiques et nous avons aussi mis en place des pipelines CI/CD (Continuous Integration/Continuous Deployment) pour automatiser les tests de nos API. Nous utilisons GitHub Actions pour définir un pipeline qui exécute les tests unitaires et les tests d'intégration à chaque commit.
+
+Ce rapport a détaillé les différentes étapes entreprises pour sécuriser une infrastructure cloud, les clés SSH, et le code de l'application. En mettant en œuvre ces mesures, nous avons renforcé la sécurité globale de la solution, protégeant ainsi les données et les ressources de l'entreprise contre les menaces potentielles. Les connaissances acquises lors de cet atelier sont essentielles pour concevoir et maintenir des infrastructures cloud sécurisées dans un environnement professionnel.
 
 --------------------------------------------------------------------
 Troubleshooting :
