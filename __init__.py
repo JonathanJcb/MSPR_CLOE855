@@ -1,14 +1,12 @@
-from flask import Flask, render_template_string, render_template, jsonify, request, redirect, url_for, session
-from flask import render_template
-from flask import json
-from urllib.request import urlopen
-from werkzeug.utils import secure_filename
+from flask import Flask, render_template, jsonify, request, redirect, url_for, session
 import sqlite3
+import logging
+from logging.handlers import RotatingFileHandler
 
-app = Flask(__name__)                                                                                                                  
+app = Flask(__name__)
 app.secret_key = b'_5#y2L"F4Q8z\n\xec]/'  # Clé secrète pour les sessions
 
-# Login
+# Configurer le logging
 handler = RotatingFileHandler('access.log', maxBytes=10000, backupCount=1)
 handler.setLevel(logging.INFO)
 app.logger.addHandler(handler)
@@ -20,38 +18,33 @@ def log_request_info():
 # Fonction pour vérifier si l'utilisateur est authentifié
 def est_authentifie():
     return session.get('authentifie')
-    
-# Fonction pour créer une clé "authentifie" dans la session utilisateur
-def est_authentifie():
-    return session.get('authentifie')
 
+# Page d'accueil
 @app.route('/')
 def hello_world():
     return render_template('hello.html')
 
+# Page de lecture (exemple)
 @app.route('/lecture')
 def lecture():
     if not est_authentifie():
-        # Rediriger vers la page d'authentification si l'utilisateur n'est pas authentifié
         return redirect(url_for('authentification'))
 
-  # Si l'utilisateur est authentifié
     return "<h2>Bravo, vous êtes authentifié</h2>"
 
+# Page d'authentification
 @app.route('/authentification', methods=['GET', 'POST'])
 def authentification():
     if request.method == 'POST':
-        # Vérifier les identifiants
-        if request.form['username'] == 'admin' and request.form['password'] == 'password': # password à cacher par la suite
+        if request.form['username'] == 'admin' and request.form['password'] == 'password':
             session['authentifie'] = True
-            # Rediriger vers la route lecture après une authentification réussie
             return redirect(url_for('lecture'))
         else:
-            # Afficher un message d'erreur si les identifiants sont incorrects
             return render_template('formulaire_authentification.html', error=True)
 
     return render_template('formulaire_authentification.html', error=False)
 
+# Route pour la fiche client par ID
 @app.route('/fiche_client/<int:post_id>')
 def Readfiche(post_id):
     if not est_authentifie():
@@ -64,6 +57,7 @@ def Readfiche(post_id):
     conn.close()
     return render_template('read_data.html', data=data)
 
+# Route pour la consultation de la BDD
 @app.route('/consultation/')
 def ReadBDD():
     if not est_authentifie():
