@@ -94,7 +94,7 @@ def enregistrer_client():
     return redirect('/consultation/')
 
 # Nouvelle route pour la recherche par nom
-@app.route('/fiche_client/<string:post_nom>')
+@app.route('/fiche_nom/<string:post_nom>')
 def Readfiche2(post_nom):
     if not est_authentifie():
         return redirect(url_for('user_authentification'))
